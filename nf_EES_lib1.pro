@@ -14,14 +14,16 @@ DEFINES += NF_EES_LIB1_LIBRARY
 SOURCES += nf_ees_lib1.cpp \
     refproper.cpp \
     ees_common.cpp \
-    c_nfadd.cpp
+    c_nfadd.cpp \
+    c_nftliq.cpp
 
 HEADERS += nf_ees_lib1.h\
         nf_ees_lib1_global.h \
     REFPROP2.H \
     refproper.h \
     ees_common.h \
-    c_nfadd.h
+    c_nfadd.h \
+    c_nftliq.h
 
 unix {
     target.path = /usr/lib

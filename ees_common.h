@@ -18,18 +18,23 @@ typedef void (__stdcall *fp_ees_fdl) (char s[256], int& clen, int& mode, int& NI
 class EesCommonFunction {
 protected:
   std::string name;
+  std::string sCallSignature;
+  std::string sInputUnits;
+  std::string sOutputUnits;
 public:
   static std::vector<double> ParamRec2Vector(EesParamRec const * const input_rec);
   static void Vector2ParamRec(std::vector<double> const & output_vec, EesParamRec * const output_rec);
 public:
+  EesCommonFunction(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits);
   enum CALL_CODE {CODE_CALL_SIG = -1, CODE_INPUT_UNITS = -2, CODE_OUTPUT_UNITS = -3};
-  virtual std::string getCallSignature() const = 0;
-  virtual std::string getInputUnits() const = 0;
-  virtual std::string getOutputUnits() const = 0;
+  std::string getCallSignature() const;
+  std::string getInputUnits() const;
+  std::string getOutputUnits() const;
 };
 
 class EesDLF: public EesCommonFunction {
 public:
+  EesDLF(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits);
   virtual double funcDLF(std::string &s, std::vector<double> &inputs) = 0;
   double callDLF(char s[256], int &mode, struct EesParamRec *input_rec);
 };

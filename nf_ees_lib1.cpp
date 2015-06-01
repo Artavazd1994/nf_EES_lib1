@@ -42,9 +42,14 @@ myLib::myLib() { ; }
 
 myLib::~myLib() { ; }
 
-C_NFADD & myLib::getNfadd()
+EesDLF &myLib::getNfadd()
 {
   return nfadder;
+}
+
+EesDLF &myLib::getNftliq()
+{
+  return nftliquor;
 }
 
 BOOL APIENTRY DllMain( HANDLE hModule,
@@ -106,4 +111,10 @@ NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
   struct EesParamRec *input_rec)
 {
   return getLib().getNfadd().callDLF(s, mode, input_rec);
+}
+
+NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFTLIQ(char s[256], int &mode,
+  struct EesParamRec *input_rec)
+{
+  return getLib().getNftliq().callDLF(s, mode, input_rec);
 }

@@ -5,15 +5,18 @@
 #include "ees_common.h"
 #include <fstream>
 #include "c_nfadd.h"
+#include "c_nftliq.h"
 
 class myLib {
   C_NFADD nfadder;
+  C_nftliq nftliquor;
 public:
   static void logtimestamp(std::ofstream &ofs);
   static std::ofstream & getofs();
   myLib();
   ~myLib();
-  C_NFADD & getNfadd();
+  EesDLF & getNfadd();
+  EesDLF & getNftliq();
 };
 
 myLib & getLib();
@@ -27,6 +30,9 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE DLPNames(char *Names);
 NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE FDLNames(char* Names);
 // A very boring function.
 NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
+  struct EesParamRec *input_rec);
+// A less boring function.
+NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFTLIQ(char s[256], int &mode,
   struct EesParamRec *input_rec);
 
 #endif // NF_EES_LIB1_H

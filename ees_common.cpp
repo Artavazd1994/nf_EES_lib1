@@ -32,6 +32,36 @@ void EesCommonFunction::Vector2ParamRec(std::vector<double> const & output_vec, 
   }
 }
 
+EesCommonFunction::EesCommonFunction(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits) :
+  name(Name),
+  sCallSignature(CallSignature),
+  sInputUnits(InputUnits),
+  sOutputUnits(OutputUnits)
+{
+  // nothing to do here.
+}
+
+std::string EesCommonFunction::getCallSignature() const
+{
+  return sCallSignature;
+}
+
+std::string EesCommonFunction::getInputUnits() const
+{
+  return sInputUnits;
+}
+
+std::string EesCommonFunction::getOutputUnits() const
+{
+  return sOutputUnits;
+}
+
+EesDLF::EesDLF(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits) :
+ ::EesCommonFunction(Name, CallSignature, InputUnits, OutputUnits)
+{
+
+}
+
 double EesDLF::callDLF(char s[256], int &mode, struct EesParamRec *input_rec)
 {
   switch (mode)

@@ -26,12 +26,13 @@
 #include "refproper.h"
 #include <windows.h>
 #include <stdio.h>
-#include <iostream>
 
 #undef UNICODE
 
-refproper::refproper() :
-FLD_PATH("C:\\Program Files (x86)\\REFPROP\\fluids\\")
+refproper::refproper(std::ostream &ofs, std::string LibPath, std::string FluidPath) :
+mofs(ofs),
+mFLD_PATH(FluidPath),
+mLibPath(LibPath)
 {
   ierr=0;
   info_index=1;
@@ -41,20 +42,18 @@ FLD_PATH("C:\\Program Files (x86)\\REFPROP\\fluids\\")
   tmp_int=0;
   kr=1;
 
-
-// First create a pointer to an instance of the library
-// Then have windows load the library.
-  HINSTANCE RefpropdllInstance;
-//This looks only in the current directory for refprop.dll
-  RefpropdllInstance = LoadLibrary(TEXT("C:\\Program Files (x86)\\REFPROP\\refprop.dll"));
-  std::cout << "Hello world!" << std::endl;
+  // First create a pointer to an instance of the library
+  // Then have windows load the library.
+  //HINSTANCE RefpropdllInstance;
+  // This looks only in the current directory for refprop.dll
+  char const * const cLibPath = mLibPath.c_str();
+  RefpropdllInstance = LoadLibraryA(cLibPath);
+  mofs << "refproper: in constructor." << std::endl;
   if (RefpropdllInstance) {
-    std::cout << "Loaded the library!" << std::endl;
+    mofs << "refproper: Loaded the library!" << std::endl;
   } else {
-    std::cout
-        << "Failed to load the library! Giants, flames, death and despair."
-        << std::endl;
-    exit(0);
+    mofs << "refproper: Did not load the library! Watch out now." << std::endl;
+    throw std::exception("refproper: Failed to load the library! Giants, flames, death and despair.");
   }
 
 // Then get pointers into the dll to the actual functions.
@@ -164,8 +163,8 @@ FLD_PATH("C:\\Program Files (x86)\\REFPROP\\fluids\\")
 // herr[] = a character array for storing a string - Error message
 // hfmix[] a character array defining the path to the mixture file
 
-  strcpy(hf, FLD_PATH);
-  strcpy(hfmix, FLD_PATH);
+  strcpy(hf, mFLD_PATH.c_str());
+  strcpy(hfmix, mFLD_PATH.c_str());
 
   //...initialize the program and set the pure fluid component name
   //i=1;
@@ -173,16 +172,30 @@ FLD_PATH("C:\\Program Files (x86)\\REFPROP\\fluids\\")
   //strcpy(hfmix,"hmx.bnc");
   //strcpy(hrf,"DEF");
   //strcpy(herr,"Ok");
+/*
+  //...For a mixture, use the following setup instead of the lines above.
+  // Use "|" as the file name delimiter for mixtures
+  i=2;
+  strcat(hf,"ETHANOL.FLD");
+  strcat(hf, "|");
+  strcat(hf, mFLD_PATH.c_str());
+  strcat(hf,"WATER.FLD");
+  strcat(hfmix,"hmx.bnc");
+  strcpy(hrf,"DEF");
+  strcpy(herr,"Ok");
+  x[0]=.40;     // Ethanol composition
+  x[1]=.60;
+*/
 
   //...For a mixture, use the following setup instead of the lines above.
   // Use "|" as the file name delimiter for mixtures
   i=3;
   strcat(hf,"nitrogen.fld");
-  strcat(hf, "|");
-  strcat(hf, FLD_PATH);
+  strcat(hf,"|");
+  strcat(hf, mFLD_PATH.c_str());
   strcat(hf,"argon.fld");
-  strcat(hf, "|");
-  strcat(hf, FLD_PATH);
+  strcat(hf,"|");
+  strcat(hf, mFLD_PATH.c_str());
   strcat(hf,"oxygen.fld");
   strcat(hfmix,"hmx.bnc");
   strcpy(hrf,"DEF");
@@ -191,19 +204,22 @@ FLD_PATH("C:\\Program Files (x86)\\REFPROP\\fluids\\")
   x[1]=.0092;
   x[2]=.2096;
 
-  std::cout << "some blank lines "  << std::endl << std::endl;
-  std::cout << "hf = "    << hf     << std::endl;
-  std::cout << "hfmix = " << hfmix  << std::endl;
-  std::cout << "hrf = "   << hrf    << std::endl;
-  std::cout << "herr = "  << herr   << std::endl;
+  mofs << "some blank lines "  << std::endl << std::endl;
+  mofs << "hf = "    << hf     << std::endl;
+  mofs << "hfmix = " << hfmix  << std::endl;
+  mofs << "hrf = "   << hrf    << std::endl;
+  mofs << "herr = "  << herr   << std::endl;
 
   //...Call SETUP to initialize the program
   SETUPdll(&i, hf, hfmix, hrf, &ierr, herr,
       refpropcharlength*ncmax,refpropcharlength,
       lengthofreference,errormessagelength);
   //long ,char*,char*,char*,long ,char*,long ,long ,long ,long
-  if (ierr != 0) printf("%s\n",herr);
-
+  if (ierr != 0) {
+    mofs << herr << std::endl;
+    return;
+    // TODO: throw something
+  }
 
   INFOdll(&info_index,&wm,&ttp,&tnbp,&tc,&pc,&dc,&zc,&acf,&dip,&rgas);
   printf("WM,ACF,DIP,TTP,TNBP   %10.4f,%10.4f,%10.4f,%10.4f,%10.4f\n",wm,acf,dip,ttp,tnbp);
@@ -342,5 +358,15 @@ FLD_PATH("C:\\Program Files (x86)\\REFPROP\\fluids\\")
 
 //...Other routines are given in UTILITY.FOR
 
+}
+
+refproper::~refproper()
+{
+  mofs << "refproper: In object destructor" << std::endl;
+  if (FreeLibrary(RefpropdllInstance)) {
+    mofs << "refproper: Successfully unloaded the library." << std::endl;
+  } else {
+    mofs << "refproper: Failed to unload the library." << std::endl;
+  }
 }
 

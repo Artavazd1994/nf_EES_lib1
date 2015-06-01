@@ -6,6 +6,10 @@
 #define REFPROPER_H
 
 #include "REFPROP2.H"
+#include <windows.h>
+#include <string>
+#include <fstream>
+#include <iostream>
 
 class refproper
 {
@@ -19,7 +23,9 @@ class refproper
   static const int maxcoefs = 50;
 
 public:
-  refproper();
+  refproper(std::ostream &ofs = std::cout,
+            std::string LibPath = "C:\\Program Files (x86)\\REFPROP\\refprop.dll",
+            std::string FluidPath = "C:\\Program Files (x86)\\REFPROP\\fluids\\");
   ~refproper();
 
   double x[ncmax],xliq[ncmax],xvap[ncmax],f[ncmax];
@@ -39,8 +45,14 @@ public:
   long tmp_int;
   long kr;
 
+  // Log output stream
+  std::ostream &mofs;
+  // DLL path and module
+  const std::string mLibPath;
+  HINSTANCE RefpropdllInstance;
   //Exlicitely set the fluid file PATH
-  const char * const FLD_PATH;
+  const std::string mFLD_PATH;
+
 public:
   fp_ABFL1dllTYPE ABFL1dll;
   fp_ABFL2dllTYPE ABFL2dll;
