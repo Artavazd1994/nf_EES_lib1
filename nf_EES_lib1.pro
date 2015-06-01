@@ -12,11 +12,16 @@ TEMPLATE = lib
 DEFINES += NF_EES_LIB1_LIBRARY
 
 SOURCES += nf_ees_lib1.cpp \
-    EX_C2.cc
+    refproper.cpp \
+    ees_common.cpp \
+    c_nfadd.cpp
 
 HEADERS += nf_ees_lib1.h\
         nf_ees_lib1_global.h \
-    REFPROP2.H
+    REFPROP2.H \
+    refproper.h \
+    ees_common.h \
+    c_nfadd.h
 
 unix {
     target.path = /usr/lib
