@@ -27,23 +27,10 @@ public:
             std::string LibPath = "C:\\Program Files (x86)\\REFPROP\\refprop.dll",
             std::string FluidPath = "C:\\Program Files (x86)\\REFPROP\\fluids\\");
   ~refproper();
-
-  double x[ncmax],xliq[ncmax],xvap[ncmax],f[ncmax];
-
-  long i,ierr;
-  char hf[refpropcharlength*ncmax], hrf[lengthofreference+1],
-      herr[errormessagelength+1],hfmix[refpropcharlength+1];
-
-  double wm,ttp,tnbp,tc,pc,dc,zc,acf,dip,rgas;
-  long info_index;
-  double t;
-  double p,dl,dv;
-  long j;
-  double d,q,e,h,s,cv,cp,w,b,c,
-      dpdrho,d2pdd2,dpdt,dhdt_d,dhdt_p,dhdp_t,dhdp_d,
-      sigma,dhdd_t,dhdd_p,eta,tcx,pp,tt,hjt,h1,dd;
-  long tmp_int;
-  long kr;
+  void demo();
+  void setupMyFluid();
+  void critp();
+  double tliq(const double P);
 
   // Log output stream
   std::ostream &mofs;

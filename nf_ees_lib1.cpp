@@ -84,7 +84,7 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE DLFNames(char* Names)
   myLib::getofs() << "DLFNames with Names = "
        << pnames
        << std::endl;
-  strcpy(Names,"NFADD");
+  strcpy(Names,"NFADD,NFTLIQ");
 }
 
 // List of DLP format procedures

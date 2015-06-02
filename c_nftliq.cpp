@@ -6,6 +6,7 @@ C_nftliq::C_nftliq() :
   rp(myLib::getofs())
 {
   myLib::getofs() << name << ": object constructor" << std::endl;
+  rp.setupMyFluid();
 }
 
 C_nftliq::~C_nftliq()
@@ -15,5 +16,6 @@ C_nftliq::~C_nftliq()
 
 double C_nftliq::funcDLF(std::string &s, std::vector<double> &inputs)
 {
-  return 100;
+  double P = inputs[0];
+  return rp.tliq(P);
 }
