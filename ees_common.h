@@ -41,6 +41,7 @@ public:
 
 class EesDLP: public EesCommonFunction {
 public:
+  EesDLP(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits);
   virtual void funcDLP(std::string &s, std::vector<double> &inputs, std::vector<double> &outputs) = 0;
   void callDLP(char s[256], int &mode, EesParamRec *input_rec, EesParamRec *output_rec);
 };

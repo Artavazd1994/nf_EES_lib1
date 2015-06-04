@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 class refproper
 {
@@ -23,6 +24,9 @@ class refproper
   static const int maxcoefs = 50;
 
 public:
+  static refproper * factory(std::ostream &ofs);
+
+public:
   refproper(std::ostream &ofs = std::cout,
             std::string LibPath = "C:\\Program Files (x86)\\REFPROP\\refprop.dll",
             std::string FluidPath = "C:\\Program Files (x86)\\REFPROP\\fluids\\");
@@ -30,14 +34,24 @@ public:
   void demo();
   void setupMyFluid();
   void critp();
-  double tliq(const double P);
+  void saturatedLiquidFromPressure(double p, double &t,
+                                               double &rho_l, double &rho_v,
+                                               std::vector<double> &v_xliq,
+                                               std::vector<double> &v_xvap);
+  // subroutine PQFLSH (p,q,z,kq,t,D,Dl,Dv,x,y,e,h,s,cv,cp,w,ierr,herr)
+  void saturatedStateFromPressure2(double p, double q, std::vector<double> z,
+                                   double &t, double &D,
+                                   double &h, double &s);
+  void thermalProperties(double t, double rho, std::vector<double> x,
+                         double &p, double &e, double &h, double &s);
+
 
   // Log output stream
   std::ostream &mofs;
   // DLL path and module
   const std::string mLibPath;
   HINSTANCE RefpropdllInstance;
-  //Exlicitely set the fluid file PATH
+  // Explicitely set the fluid file PATH
   const std::string mFLD_PATH;
 
 public:

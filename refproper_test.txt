@@ -1,0 +1,30 @@
+refproper: in constructor.
+refproper: Loaded the library!
+some blank lines 
+
+hf = C:\Program Files (x86)\REFPROP\fluids\nitrogen.fld|C:\Program Files (x86)\REFPROP\fluids\argon.fld|C:\Program Files (x86)\REFPROP\fluids\oxygen.fld
+hfmix = C:\Program Files (x86)\REFPROP\fluids\hmx.bnc
+hrf = DEF
+herr = Ok
+WM,ACF,DIP,TTP,TNBP      28.0135,    0.0372,    0.0000,   63.1510,   77.3550
+TC,PC,DC,RGAS           126.1920, 3395.8000,   11.1839,    8.3143
+P,Dl,Dv,xl[0],xv[0]     662.7331,   26.5937,    0.9399,    0.7812,    0.8935
+P,Dl,Dv,xl[0],xv[0]     566.1072,   28.3583,    0.7823,    0.5887,    0.7812
+T,Dl,Dv,xl(1),xv(1)     100.0000,   28.3583,    0.7823,    0.5887,    0.7812
+T,P,D                   300.0000,20000.0000,    7.7603
+T,P,D,H,CP              300.0000,20000.0000,    7.7603, 7697.3871,   36.9445
+F,B,C                 15780.5409,   -0.0071,    0.0013
+dP/dD,d2P/dD2,dP/dT    2920.5520,  169.7492,   93.9553
+Enthalpy derivatives     33.9945,   36.9445,  -91.7000,   -1.1484,   -0.0314
+T,SURF. TN.             300.0000,    0.0000
+VIS.,TH.CND.             24.1942,   37.6405
+T, D, P from TDFLSH     300.0000,    7.7603,   20.0000
+T, D, P from PDFLSH     300.0000,    7.7603,   20.0000
+T, D, P from PHFLSH     300.0000,    7.7603,   20.0000
+T, D, P from PSFLSH     300.0000,    7.7603,   20.0000
+T, D, P from DHFLSH     300.0000,    7.7603,   20.0000
+T, D, P from THFLSH     300.0000,    7.7603,   20.0000
+Melting pressure(MPa)   246.7377,  100.0000
+Melting temperature(K)  100.0000,  246.7377
+Sublimation pr.(kPa)      5.0047,  200.0000
+Sublimation temp.(K)     61.4977,    5.0047

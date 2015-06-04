@@ -15,7 +15,9 @@ SOURCES += nf_ees_lib1.cpp \
     refproper.cpp \
     ees_common.cpp \
     c_nfadd.cpp \
-    c_nftliq.cpp
+    c_nftliq.cpp \
+    c_nfsatmix.cpp \
+    c_nfmixtherm.cpp
 
 HEADERS += nf_ees_lib1.h\
         nf_ees_lib1_global.h \
@@ -23,7 +25,9 @@ HEADERS += nf_ees_lib1.h\
     refproper.h \
     ees_common.h \
     c_nfadd.h \
-    c_nftliq.h
+    c_nftliq.h \
+    c_nfsatmix.h \
+    c_nfmixtherm.h
 
 unix {
     target.path = /usr/lib

@@ -6,17 +6,23 @@
 #include <fstream>
 #include "c_nfadd.h"
 #include "c_nftliq.h"
+#include "c_nfsatmix.h"
+#include "c_nfmixtherm.h"
 
 class myLib {
   C_NFADD nfadder;
   C_nftliq nftliquor;
+  c_nfsatmix nfsatmix;
+  c_nfmixtherm nfmixtherm;
 public:
   static void logtimestamp(std::ofstream &ofs);
   static std::ofstream & getofs();
   myLib();
   ~myLib();
   EesDLF & getNfadd();
-  EesDLF & getNftliq();
+  EesDLP &getNftliq();
+  EesDLP &getNfsatmix();
+  EesDLP &getNftherm();
 };
 
 myLib & getLib();
@@ -32,7 +38,13 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE FDLNames(char* Names);
 NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
   struct EesParamRec *input_rec);
 // A less boring function.
-NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFTLIQ(char s[256], int &mode,
-  struct EesParamRec *input_rec);
+NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
+  struct EesParamRec *input_rec, struct EesParamRec *output_rec);
+
+NF_CLASS_EXPORT void NF_CALLCODE NFSATMIX(char s[256], int &mode,
+  struct EesParamRec *input_rec, struct EesParamRec *output_rec);
+
+NF_CLASS_EXPORT void NF_CALLCODE NFMIXTHERM(char s[256], int &mode,
+  struct EesParamRec *input_rec, struct EesParamRec *output_rec);
 
 #endif // NF_EES_LIB1_H

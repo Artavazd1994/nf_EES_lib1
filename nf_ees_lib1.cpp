@@ -28,12 +28,19 @@ void myLib::logtimestamp(std::ofstream &ofs)
 std::ofstream & myLib::getofs()
 {
   static std::ofstream ofs;
-  if (!ofs.is_open()) {
-    //ofs = new std::ofstream();
-    ofs.open("C:/EES32/Userlib/nf_EES_lib1/eessucks.log",
-             std::ofstream::out | std::ofstream::app);
-    logtimestamp(ofs);
-    ofs << "Opening the file ..." << std::endl;
+  // Do you want to make noise, or not?
+  // TODO: debug level instead of boolean.
+  bool quiet = true;
+  if (quiet) {
+    ofs.close();
+  } else {
+    if (!ofs.is_open()) {
+      //ofs = new std::ofstream();
+      ofs.open("C:/EES32/Userlib/nf_EES_lib1/eessucks.log",
+               std::ofstream::out | std::ofstream::app);
+      logtimestamp(ofs);
+      ofs << "Opening the file ..." << std::endl;
+    }
   }
   return ofs;
 }
@@ -47,9 +54,19 @@ EesDLF &myLib::getNfadd()
   return nfadder;
 }
 
-EesDLF &myLib::getNftliq()
+EesDLP &myLib::getNftliq()
 {
   return nftliquor;
+}
+
+EesDLP &myLib::getNfsatmix()
+{
+  return nfsatmix;
+}
+
+EesDLP &myLib::getNftherm()
+{
+  return nfmixtherm;
 }
 
 BOOL APIENTRY DllMain( HANDLE hModule,
@@ -84,7 +101,7 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE DLFNames(char* Names)
   myLib::getofs() << "DLFNames with Names = "
        << pnames
        << std::endl;
-  strcpy(Names,"NFADD,NFTLIQ");
+  strcpy(Names,"NFADD");
 }
 
 // List of DLP format procedures
@@ -94,7 +111,7 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE DLPNames(char *Names)
   myLib::getofs() << "DLPNames with Names = "
        << pnames
        << std::endl;
-  strcpy(Names,"");
+  strcpy(Names,"NFTLIQ,NFSATMIX,NFMIXTHERM");
 }
 
 // List of FDL format procedures
@@ -113,8 +130,26 @@ NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
   return getLib().getNfadd().callDLF(s, mode, input_rec);
 }
 
-NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFTLIQ(char s[256], int &mode,
-  struct EesParamRec *input_rec)
+NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
+  struct EesParamRec *input_rec, struct EesParamRec *output_rec)
 {
-  return getLib().getNftliq().callDLF(s, mode, input_rec);
+  getLib().getNftliq().callDLP(s, mode, input_rec, output_rec);
+  return;
 }
+#pragma comment(linker, "/EXPORT:NFTLIQ=?NFTLIQ@@YGXQADAAHPAUEesParamRec@@2@Z")
+
+NF_CLASS_EXPORT void NF_CALLCODE NFSATMIX(char s[256], int &mode,
+  struct EesParamRec *input_rec, struct EesParamRec *output_rec)
+{
+  getLib().getNfsatmix().callDLP(s, mode, input_rec, output_rec);
+  return;
+}
+#pragma comment(linker, "/EXPORT:NFSATMIX=?NFSATMIX@@YGXQADAAHPAUEesParamRec@@2@Z")
+
+NF_CLASS_EXPORT void NF_CALLCODE NFMIXTHERM(char s[256], int &mode,
+  struct EesParamRec *input_rec, struct EesParamRec *output_rec)
+{
+  getLib().getNftherm().callDLP(s, mode, input_rec, output_rec);
+  return;
+}
+#pragma comment(linker, "/EXPORT:NFMIXTHERM=?NFMIXTHERM@@YGXQADAAHPAUEesParamRec@@2@Z")

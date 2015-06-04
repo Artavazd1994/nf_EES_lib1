@@ -3,7 +3,7 @@
 
 #include "nf_ees_lib1_global.h"
 
-#if 0
+#if 1
 // For C+ calling conventions, pass by reference instead of pointer
 typedef void (__stdcall *fp_ABFL1dllTYPE)(double &,double &,double *,long &,double &,double &,double &,double &,double &,double &,long &,char*,long );
 typedef void (__stdcall *fp_ABFL2dllTYPE)(double &,double &,double *,long &,long &,double &,double &,double &,double &,double &,double &,double &,double *,double *,double &,double &,double &,double &,double *,double *,double &,long &,char*,long );

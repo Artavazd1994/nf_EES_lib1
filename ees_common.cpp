@@ -18,18 +18,26 @@ std::vector<double> EesCommonFunction::ParamRec2Vector(EesParamRec const * const
 // If it does not match the length of the vector, an exception should be raised.
 void EesCommonFunction::Vector2ParamRec(std::vector<double> const & output_vec, EesParamRec * const output_rec)
 {
-  EesParamRec *output = output_rec;
+  EesParamRec * output = output_rec;
+  int givenLength = 0;
+  while (output != NULL) {
+    output = output->next;
+    givenLength++;
+  }
+  if (givenLength < output_vec.size()) {
+    throw std::exception("Output record too short. Good luck!");
+  }
+  output = output_rec;
   for (std::vector<double>::const_iterator it = output_vec.begin(); it != output_vec.end(); ++it)
   {
-    if (output == NULL) {
-      throw std::exception("Output record too short. Good luck!");
-    }
     output->value = *it;
     output = output->next;
   }
+  /*
   if (output != NULL) {
     throw std::exception("Output record too long. Good luck!");
   }
+  */
 }
 
 EesCommonFunction::EesCommonFunction(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits) :
@@ -98,6 +106,64 @@ double EesDLF::callDLF(char s[256], int &mode, struct EesParamRec *input_rec)
       std::string ss = name + ": " + e.what();
       strcpy(s,ss.c_str());
       return 0;
+    }
+  }
+}
+
+EesDLP::EesDLP(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits) :
+  ::EesCommonFunction(Name, CallSignature, InputUnits, OutputUnits)
+{
+  // nothing to do here.
+}
+
+void EesDLP::callDLP(char s[256], int &mode, EesParamRec *input_rec, EesParamRec *output_rec)
+{
+  switch (mode)
+  {
+  case CODE_CALL_SIG:
+    strcpy(s, getCallSignature().c_str());
+    return;
+  case CODE_INPUT_UNITS:
+    strcpy(s, getInputUnits().c_str());
+    return;
+  case CODE_OUTPUT_UNITS:
+    strcpy(s, getOutputUnits().c_str());
+    return;
+  default:
+    try {
+      myLib::logtimestamp(myLib::getofs());
+      myLib::getofs() << "calldlp: converting string input ..." << std::endl;
+      std::string str(s);
+      myLib::getofs() << "calldlp: converting input records ..." << std::endl;
+      std::vector<double> input_vec = ParamRec2Vector(input_rec);
+      myLib::getofs() << "calldlp: str = \"" << str.substr(0,10) << "\" ... " << std::endl;
+      myLib::getofs() << "calldlp: input_vec = ";
+      for (std::vector<double>::const_iterator it = input_vec.begin(); it != input_vec.end(); ++it)
+      {
+        myLib::getofs() << *it << ",";
+      }
+      myLib::getofs() << std::endl;
+
+      myLib::getofs() << "calldlp: calling funcDLP ..." << std::endl;
+      std::vector<double> output_vec;
+      funcDLP(str, input_vec, output_vec);
+
+      myLib::getofs() << "calldlp: outputs were:" << std::endl;
+      for (std::vector<double>::const_iterator it = output_vec.begin(); it != output_vec.end(); ++it)
+      {
+        myLib::getofs() << *it << ",";
+      }
+      myLib::getofs() << std::endl;
+
+      strcpy(s,str.c_str());
+      Vector2ParamRec(output_vec, output_rec);
+      return;
+    } catch (std::exception &e) {
+      mode = 10;
+      myLib::getofs() << name << ": " << e.what() << std::endl;
+      std::string ss = name + ": " + e.what();
+      strcpy(s,ss.c_str());
+      return;
     }
   }
 }

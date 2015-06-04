@@ -27,8 +27,18 @@
 #include <windows.h>
 #include <stdio.h>
 #include <iomanip>
+#include "ees_common.h"
 
 #undef UNICODE
+
+refproper *refproper::factory(std::ostream &ofs)
+{
+  try {
+    return new refproper(ofs);
+  } catch (...) {
+    return new refproper(ofs, "C:\\Program Files\\REFPROP\\refprop.dll", "C:\\Program Files\\REFPROP\\fluids\\");
+  }
+}
 
 refproper::refproper(std::ostream &ofs, std::string LibPath, std::string FluidPath) :
 mofs(ofs),
@@ -216,17 +226,17 @@ void refproper::demo()
   mofs << "herr = "  << herr   << std::endl;
 
   //...Call SETUP to initialize the program
-  SETUPdll(&i, hf, hfmix, hrf, &ierr, herr,
+  // (long &,char*,char*,char*,long &,char*,long ,long ,long ,long );
+  SETUPdll(i, hf, hfmix, hrf, ierr, herr,
       refpropcharlength*ncmax,refpropcharlength,
       lengthofreference,errormessagelength);
-  //long ,char*,char*,char*,long ,char*,long ,long ,long ,long
   if (ierr != 0) {
     mofs << herr << std::endl;
     return;
     // TODO: throw something
   }
-
-  INFOdll(&info_index,&wm,&ttp,&tnbp,&tc,&pc,&dc,&zc,&acf,&dip,&rgas);
+  // (long &,double &,double &,double &,double &,double &,double &,double &,double &,double &,double &);
+  INFOdll(info_index,wm,ttp,tnbp,tc,pc,dc,zc,acf,dip,rgas);
   mofs << "WM,ACF,DIP,TTP,TNBP   "
           << std::fixed
           << std::setw(10) << std::setprecision(4) << wm << ","
@@ -249,7 +259,8 @@ void refproper::demo()
   //...Get saturation properties given t,x; for i=1: x is liquid phase
   //.....                                   for i=2: x is vapor phase
   i=1;
-  SATTdll(&t,x,&i,&p,&dl,&dv,xliq,xvap,&ierr,herr,errormessagelength);
+  // (double &,double *,long &,double &,double &,double &,double *,double *,long &,char*,long );
+  SATTdll(t,x,i,p,dl,dv,xliq,xvap,ierr,herr,errormessagelength);
   mofs << "P,Dl,Dv,xl[0],xv[0]   "
           << std::fixed
           << std::setw(10) << std::setprecision(4) << p << ","
@@ -259,7 +270,7 @@ void refproper::demo()
           << std::setw(10) << std::setprecision(4) << xvap[0]
           << std::endl;
   i=2;
-  SATTdll(&t,x,&i,&p,&dl,&dv,xliq,xvap,&ierr,herr,errormessagelength);
+  SATTdll(t,x,i,p,dl,dv,xliq,xvap,ierr,herr,errormessagelength);
   mofs << "P,Dl,Dv,xl[0],xv[0]   "
           << std::fixed
           << std::setw(10) << std::setprecision(4) << p << ","
@@ -271,7 +282,7 @@ void refproper::demo()
 
   //...Calculate saturation properties at a given p. i is same as SATT
   i=2;
-  SATPdll(&p,x,&i,&t,&dl,&dv,xliq,xvap,&ierr,herr,errormessagelength);
+  SATPdll(p,x,i,t,dl,dv,xliq,xvap,ierr,herr,errormessagelength);
   // TOOD: This string may not be in agreement with the output variables...
   mofs << "T,Dl,Dv,xl(1),xv(1)   "
           << std::fixed
@@ -288,7 +299,7 @@ void refproper::demo()
 
   //...Calculate d from t,p,x
   //...If phase is known: (j=1: Liquid, j=2: Vapor)
-  TPRHOdll(&t,&p,x,&j,&tmp_int,&d,&ierr,herr,errormessagelength);
+  TPRHOdll(t,p,x,j,tmp_int,d,ierr,herr,errormessagelength);
   mofs << "T,P,D                 "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << t << ","
@@ -300,7 +311,7 @@ void refproper::demo()
   //...Calls to TPFLSH are much slower than TPRHO since SATT must be called first.
   //.....(If two phase, quality is returned as q)
 
-  TPFLSHdll(&t,&p,x,&d,&dl,&dv,xliq,xvap,&q,&e,&h,&s,&cv,&cp,&w,&ierr,herr,errormessagelength);
+  TPFLSHdll(t,p,x,d,dl,dv,xliq,xvap,q,e,h,s,cv,cp,w,ierr,herr,errormessagelength);
   mofs << "T,P,D,H,CP            "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << t << ","
@@ -314,17 +325,17 @@ void refproper::demo()
   //.....isochoric (cv) and isobaric (cp) heat capacities, speed of sound (w),
   //.....and Joule-Thomson coefficient (hjt) from t,d,x
   //.....(subroutines THERM2 and THERM3 contain more properties, see PROP_SUB.FOR)
-  THERMdll(&t,&d,x,&p,&e,&h,&s,&cv,&cp,&w,&hjt);
+  THERMdll(t,d,x,p,e,h,s,cv,cp,w,hjt);
 
   //...Calculate pressure
-  PRESSdll(&t,&d,x,&p);
+  PRESSdll(t,d,x,p);
 
   //...Calculate fugacity
-  FGCTYdll(&t,&d,x,f);
+  FGCTYdll(t,d,x,f);
 
   //...Calculate second and third virial coefficients
-  VIRBdll (&t,x,&b);
-  VIRCdll (&t,x,&c);
+  VIRBdll (t,x,b);
+  VIRCdll (t,x,c);
   mofs << "F,B,C                 "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << f[0] << ","
@@ -335,9 +346,9 @@ void refproper::demo()
   //
   //...Calculate the derivatives: dP/dD, d^2P/dD^2, dP/dT  (D indicates density)
   //...(dD/dP, dD/dT, and dB/dT are also available, see PROP_SUB.FOR)
-  DPDDdll (&t,&d,x,&dpdrho);
-  DPDD2dll (&t,&d,x,&d2pdd2);
-  DPDTdll (&t,&d,x,&dpdt);
+  DPDDdll (t,d,x,dpdrho);
+  DPDD2dll (t,d,x,d2pdd2);
+  DPDTdll (t,d,x,dpdt);
   mofs << "dP/dD,d2P/dD2,dP/dT   "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << dpdrho << ","
@@ -346,7 +357,7 @@ void refproper::demo()
        << std::endl;
 
   //...Calculate derivatives of enthalpy with respect to T, P, and D
-  DHD1dll(&t,&d,x,&dhdt_d,&dhdt_p,&dhdd_t,&dhdd_p,&dhdp_t,&dhdp_d);
+  DHD1dll(t,d,x,dhdt_d,dhdt_p,dhdd_t,dhdd_p,dhdp_t,dhdp_d);
   mofs << "Enthalpy derivatives  "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << dhdt_d << ","
@@ -357,7 +368,7 @@ void refproper::demo()
        << std::endl;
 
   //...Calculate surface tension
-  SURFTdll (&t,&dl,x,&sigma,&ierr,herr,errormessagelength);
+  SURFTdll (t,dl,x,sigma,ierr,herr,errormessagelength);
   mofs << "T,SURF. TN.           "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << t << ","
@@ -365,7 +376,7 @@ void refproper::demo()
        << std::endl;
 
   //...Calculate viscosity (eta) and thermal conductivity (tcx)
-  TRNPRPdll (&t,&d,x,&eta,&tcx,&ierr,herr,errormessagelength);
+  TRNPRPdll (t,d,x,eta,tcx,ierr,herr,errormessagelength);
   mofs << "VIS.,TH.CND.          "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << eta << ","
@@ -373,7 +384,7 @@ void refproper::demo()
        << std::endl;
 
   //...General property calculation with inputs of t,d,x
-  TDFLSHdll (&t,&d,x,&pp,&dl,&dv,xliq,xvap,&q,&e,&h1,&s,&cv,&cp,&w,&ierr,herr,errormessagelength);
+  TDFLSHdll (t,d,x,pp,dl,dv,xliq,xvap,q,e,h1,s,cv,cp,w,ierr,herr,errormessagelength);
   mofs << "T, D, P from TDFLSH   "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << t << ","
@@ -382,7 +393,7 @@ void refproper::demo()
        << std::endl;
 
   //...General property calculation with inputs of p,d,x
-  PDFLSHdll (&p,&d,x,&tt,&dl,&dv,xliq,xvap,&q,&e,&h1,&s,&cv,&cp,&w,&ierr,herr,errormessagelength);
+  PDFLSHdll (p,d,x,tt,dl,dv,xliq,xvap,q,e,h1,s,cv,cp,w,ierr,herr,errormessagelength);
   mofs << "T, D, P from PDFLSH   "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << tt << ","
@@ -391,7 +402,7 @@ void refproper::demo()
        << std::endl;
 
   //...General property calculation with inputs of p,h,x
-  PHFLSHdll (&p,&h,x,&tt,&dd,&dl,&dv,xliq,xvap,&q,&e,&s,&cv,&cp,&w,&ierr,herr,errormessagelength);
+  PHFLSHdll (p,h,x,tt,dd,dl,dv,xliq,xvap,q,e,s,cv,cp,w,ierr,herr,errormessagelength);
   mofs << "T, D, P from PHFLSH   "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << tt << ","
@@ -400,7 +411,7 @@ void refproper::demo()
        << std::endl;
 
   //...General property calculation with inputs of p,s,x
-  PSFLSHdll (&p,&s,x,&tt,&dd,&dl,&dv,xliq,xvap,&q,&e,&h1,&cv,&cp,&w,&ierr,herr,errormessagelength);
+  PSFLSHdll (p,s,x,tt,dd,dl,dv,xliq,xvap,q,e,h1,cv,cp,w,ierr,herr,errormessagelength);
   mofs << "T, D, P from PSFLSH   "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << tt << ","
@@ -409,7 +420,7 @@ void refproper::demo()
        << std::endl;
 
   //...General property calculation with inputs of d,h,x
-  DHFLSHdll (&d,&h,x,&tt,&pp,&dl,&dv,xliq,xvap,&q,&e,&s,&cv,&cp,&w,&ierr,herr,errormessagelength);
+  DHFLSHdll (d,h,x,tt,pp,dl,dv,xliq,xvap,q,e,s,cv,cp,w,ierr,herr,errormessagelength);
   mofs << "T, D, P from DHFLSH   "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << tt << ","
@@ -422,8 +433,8 @@ void refproper::demo()
   //         1=return lower density root
   //         2=return higher density root
 
-  THFLSHdll (&t,&h,x,
-              &kr,&pp,&dd,&dl,&dv,xliq,xvap,&q,&e,&s,&cv,&cp,&w,&ierr,herr,errormessagelength);
+  THFLSHdll (t,h,x,
+              kr,pp,dd,dl,dv,xliq,xvap,q,e,s,cv,cp,w,ierr,herr,errormessagelength);
   mofs << "T, D, P from THFLSH   "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << t << ","
@@ -436,7 +447,7 @@ void refproper::demo()
 
   //...Calculate melting pressure
   t=100.0;
-  MELTTdll (&t,x,&p,&ierr,herr,errormessagelength);
+  MELTTdll (t,x,p,ierr,herr,errormessagelength);
   mofs << "Melting pressure(MPa) "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << p/1000.0 << ","
@@ -444,7 +455,7 @@ void refproper::demo()
        << std::endl;
 
   //...Calculate melting temperature
-  MELTPdll (&p,x,&tt,&ierr,herr,errormessagelength);
+  MELTPdll (p,x,tt,ierr,herr,errormessagelength);
   mofs << "Melting temperature(K)"
        << std::fixed
        << std::setw(10) << std::setprecision(4) << tt << ","
@@ -453,7 +464,7 @@ void refproper::demo()
 
   //...Calculate sublimation pressure
   t=200.0;
-  SUBLTdll (&t,x,&p,&ierr,herr,errormessagelength);
+  SUBLTdll (t,x,p,ierr,herr,errormessagelength);
   mofs << "Sublimation pr.(kPa)  "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << p << ","
@@ -461,7 +472,7 @@ void refproper::demo()
        << std::endl;
 
   //...Calculate sublimation temperature
-  SUBLPdll (&p,x,&tt,&ierr,herr,errormessagelength);
+  SUBLPdll (p,x,tt,ierr,herr,errormessagelength);
   mofs << "Sublimation temp.(K)  "
        << std::fixed
        << std::setw(10) << std::setprecision(4) << tt << ","
@@ -507,13 +518,13 @@ void refproper::setupMyFluid()
   mofs << "herr = "  << herr   << std::endl;
 
   //...Call SETUP to initialize the program
-  SETUPdll(&nc, hf, hfmix, hrf, &ierr, herr,
+  SETUPdll(nc, hf, hfmix, hrf, ierr, herr,
       refpropcharlength*ncmax,refpropcharlength,
       lengthofreference,errormessagelength);
   //long ,char*,char*,char*,long ,char*,long ,long ,long ,long
   if (ierr != 0) {
     mofs << herr << std::endl;
-    throw std::exception("refproper: error: failed to initialize mixture.");
+    throw std::exception("refproper: error: failed to initialize mixture. See log file.");
   }
 }
 
@@ -545,7 +556,7 @@ void refproper::critp()
   kr=1;
 
   mofs << "According to INFOdll:" << std::endl;
-  INFOdll(&info_index,&wm,&ttp,&tnbp,&tc,&pc,&dc,&zc,&acf,&dip,&rgas);
+  INFOdll(info_index,wm,ttp,tnbp,tc,pc,dc,zc,acf,dip,rgas);
   mofs << "WM,ACF,DIP,TTP,TNBP   "
           << std::fixed
           << std::setw(10) << std::setprecision(4) << wm << ","
@@ -564,7 +575,7 @@ void refproper::critp()
 
   mofs << "According to CRITPdll:" << std::endl;
   // (double *,double *,double *,double *,long *,char*,long );
-  CRITPdll(x, &tc, &pc, &dc, &ierr, herr, errormessagelength);
+  CRITPdll(x, tc, pc, dc, ierr, herr, errormessagelength);
   mofs << "TC,PC,DC              "
           << std::fixed
           << std::setw(10) << std::setprecision(4) << tc << ","
@@ -577,7 +588,7 @@ void refproper::critp()
     mofs << "Be wary of the following calculation." << std::endl;
   }
   // (double *,double *,double *,double *,double *,double *,double *,double *,double *,double *,double *);
-  THERMdll(&tc, &dc, x, &pc, &e, &h, &s, &cv, &cp, &w, &hjt);
+  THERMdll(tc, dc, x, pc, e, h, s, cv, cp, w, hjt);
   mofs << "According to THERMdll, that state point is:" << std::endl;
   mofs
       << "t(in)= " << std::setw(10) << std::setprecision(4) << tc   << std::endl
@@ -592,9 +603,135 @@ void refproper::critp()
       << "hjt  = " << std::setw(10) << std::setprecision(4) << hjt << std::endl;
 }
 
-double refproper::tliq(const double P)
+void refproper::saturatedLiquidFromPressure(double p, double &t,
+                                             double &rho_l, double &rho_v,
+                                             std::vector<double> &v_xliq,
+                                             std::vector<double> &v_xvap)
 {
-  double t = 100;
-  return t;
+  //...Get saturation properties given t,x; for i=1: x is liquid phase
+  //.....                                   for i=2: x is vapor phase
+  long kph=1; // liquid composition given
+  double x_mass[ncmax], x_molar[ncmax],xliq[ncmax],xvap[ncmax];
+  x_molar[0] = 0.206791740960598;     // Mixture molar composition
+  x_molar[1] = 0.793208259039402;
+  x_molar[2] = 0;
+
+  double wmol;
+  //       function WMOL (x)
+  // (double *,double &);
+  // mol/mol[], g/mol
+  WMOLdll(x_molar, wmol);
+
+  long ierr;
+  char herr[errormessagelength+1];
+  // (double *,double *,long *,double *,double *,double *,double *,double *,long *,char*,long );
+  SATPdll(p,x_molar,kph,t,rho_l,rho_v,xliq,xvap,ierr,herr,errormessagelength);
+
+  // output unit conversion
+  rho_l = rho_l / wmol;
+  rho_v = rho_v / wmol;
+
+  v_xliq.resize(2);
+  mofs << "T,Dl,Dv,xl[0],xv[0]   "
+          << std::fixed
+          << std::setw(10) << std::setprecision(4) << t << ","
+          << std::setw(10) << std::setprecision(4) << rho_l << ","
+          << std::setw(10) << std::setprecision(4) << rho_v << ","
+          << std::setw(10) << std::setprecision(4) << xliq[0] << ","
+          << std::setw(10) << std::setprecision(4) << xvap[0]
+          << std::endl;
+  v_xliq.resize(2);
+  v_xliq.at(0) = xliq[0];
+  v_xliq.at(1) = xliq[1];
+  v_xvap.resize(2);
+  v_xvap.at(0) = xvap[0];
+  v_xvap.at(1) = xvap[1];
+
+  if (ierr != 0) {
+    mofs << "SATPdll returned an error:" << std::endl
+            << herr << std::endl;
+  } else {
+    mofs << "No errors from REFPROP, thank you." << std::endl;
+  }
 }
 
+void refproper::saturatedStateFromPressure2(double p, double q,
+    std::vector<double> x, double &t, double &D, double &h, double &s)
+{
+  // subroutine PQFLSH (p,q,z,kq,t,D,Dl,Dv,x,y,e,h,s,cv,cp,w,ierr,herr)
+  //...Get saturation properties given t,x; for i=1: x is liquid phase
+  //.....                                   for i=2: x is vapor phase
+  long kph=1; // liquid composition given
+  double x_molar[ncmax],x_mass[ncmax],xliq[ncmax],xvap[ncmax];
+  for (int i = 0; i < ncmax; ++i) {
+    if (i < x.size())
+      x_mass[i] = x[i];
+    else
+      x_mass[i] = 0;
+  }
+
+  // convert to moles basis
+  double wmol;
+  XMOLEdll(x_mass, x_molar, wmol);
+
+  long ierr;
+  char herr[errormessagelength+1];
+  long kq = 2; // flag for quality: 1 -> molar basis, 2 -> mass basis
+  double Dl, Dv, e, cv, cp, w;
+  //(double &,double &,double *,long &,double &,double &,double &,double &,double *,double *,double &,double &,double &,double &,double &,double &,long &,char*,long );
+  PQFLSHdll(p, q, x_molar, kq, t, D, Dl, Dv, xliq, xvap, e, h, s, cv, cp, w, ierr, herr, errormessagelength);
+
+  // convert output units
+  // [kg/m3] = [mol/L] * [g/mol] * (kg/g) * (L/m3)
+  D = D / wmol;
+  Dl = Dl / wmol;
+  Dv = Dv / wmol;
+  // xliq and xvap are molar basis, fyi
+  // [kJ/kg] = [J/mol] * [mol/g] * (kJ/J) * (g/kg)
+  e = e / wmol;
+  h = h / wmol;
+  s = s / wmol;
+  // [kJ/kg-K] = [J/mol] * [mol/g] * (kJ/J) * (g/kg)
+  cv = cv / wmol;
+  // [m/s]
+  //w = w;
+}
+
+void refproper::thermalProperties(double t, double rho_mass, std::vector<double> x, double &p, double &e, double &h, double &s)
+{
+  double x_molar[ncmax],x_mass[ncmax];
+  for (int i = 0; i < ncmax; ++i) {
+    if (i < x.size())
+      x_mass[i] = x[i];
+    else
+      x_mass[i] = 0;
+  }
+
+  // convert to moles basis
+  double wmol;
+  XMOLEdll(x_mass, x_molar, wmol);
+
+  // convert units of inputs
+  // [mol/L] = [kg/m3] * g/kg * m3/L * [mol/g]
+  double rho_molar = rho_mass * wmol;
+
+  double cv, cp, w, hjt;
+  //      subroutine THERM (t,rho,x,p,e,h,s,cv,cp,w,hjt)
+  // (double &,double &,double *,double &,double &,double &,double &,double &,double &,double &,double &);
+  THERMdll(t, rho_molar, x_molar, p, e, h, s, cv, cp, w, hjt);
+
+  // convert output units
+  // [kPa] = [kPa]
+  // p = p;
+  // [kJ/kg] = [J/mol] * kJ/J * [mol/g] * g/kg
+  e = e / wmol;
+  h = h / wmol;
+  // [kJ/kg-K] = [J/mol-K] * kJ/J * [mol/g] * g/kg
+  s = s / wmol;
+  cv = cv / wmol;
+  cp = cp / wmol;
+  // [m/s]
+  //w = w;
+  // [K/kPa]
+  //hjt = hjt;
+}
