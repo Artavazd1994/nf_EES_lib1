@@ -37,8 +37,9 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE FDLNames(char* Names);
 // A very boring function.
 NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
   struct EesParamRec *input_rec);
+
 // A less boring function.
-NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
+NF_CLASS_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
   struct EesParamRec *input_rec, struct EesParamRec *output_rec);
 
 NF_CLASS_EXPORT void NF_CALLCODE NFSATMIX(char s[256], int &mode,

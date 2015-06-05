@@ -33,7 +33,11 @@ void C_nftliq::funcDLP(std::string &s, std::vector<double> &inputs, std::vector<
   std::vector<double> v_xliq, v_xvap;
   v_xliq.resize(2);
   v_xvap.resize(2);
-  rp->saturatedLiquidFromPressure(P, t, rho_l, rho_v, v_xliq, v_xvap);
+  std::vector<double> z;
+  z.resize(2);
+  z[0] = 0.40;     // Mixture mass composition
+  z[1] = 0.60;
+  rp->saturatedLiquidFromPressure(P, z, t, rho_l, rho_v, v_xliq, v_xvap);
   outputs.resize(0);
   outputs.push_back(t);
   outputs.push_back(rho_l);

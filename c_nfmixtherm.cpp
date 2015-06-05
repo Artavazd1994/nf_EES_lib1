@@ -30,8 +30,8 @@ void c_nfmixtherm::funcDLP(std::string &s, std::vector<double> &inputs, std::vec
 
   std::vector<double> z;
   z.resize(2);
-  z[0] = 0.206791740960598;     // Mixture molar composition
-  z[1] = 0.793208259039402;
+  z[0] = 0.40;     // Mixture mass composition
+  z[1] = 0.60;
   double t = inputs[0];
   double rho = inputs[1];
   double p, e, h, entropy;

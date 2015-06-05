@@ -30,7 +30,7 @@ std::ofstream & myLib::getofs()
   static std::ofstream ofs;
   // Do you want to make noise, or not?
   // TODO: debug level instead of boolean.
-  bool quiet = true;
+  bool quiet = false;
   if (quiet) {
     ofs.close();
   } else {
@@ -130,7 +130,7 @@ NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
   return getLib().getNfadd().callDLF(s, mode, input_rec);
 }
 
-NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
+NF_CLASS_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
   struct EesParamRec *input_rec, struct EesParamRec *output_rec)
 {
   getLib().getNftliq().callDLP(s, mode, input_rec, output_rec);

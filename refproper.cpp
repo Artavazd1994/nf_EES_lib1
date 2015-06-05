@@ -530,20 +530,16 @@ void refproper::setupMyFluid()
 
 void refproper::critp()
 {
-  double x[ncmax],xliq[ncmax],xvap[ncmax],f[ncmax];
+  double x[ncmax];
 
-  long i,ierr;
-  char hf[refpropcharlength*ncmax], hrf[lengthofreference+1],
-      herr[errormessagelength+1],hfmix[refpropcharlength+1];
+  long ierr;
+  char herr[errormessagelength+1];
 
   double wm,ttp,tnbp,tc,pc,dc,zc,acf,dip,rgas;
   long info_index;
   double t;
-  double p,dl,dv;
   long j;
-  double d,q,e,h,s,cv,cp,w,b,c,
-      dpdrho,d2pdd2,dpdt,dhdt_d,dhdt_p,dhdp_t,dhdp_d,
-      sigma,dhdd_t,dhdd_p,eta,tcx,pp,tt,hjt,h1,dd;
+  double d,q,e,h,s,cv,cp,w,b,c,hjt;
   long tmp_int;
   long kr;
 
@@ -603,24 +599,26 @@ void refproper::critp()
       << "hjt  = " << std::setw(10) << std::setprecision(4) << hjt << std::endl;
 }
 
-void refproper::saturatedLiquidFromPressure(double p, double &t,
-                                             double &rho_l, double &rho_v,
-                                             std::vector<double> &v_xliq,
-                                             std::vector<double> &v_xvap)
+void refproper::saturatedLiquidFromPressure(double p, std::vector<double> x,
+                                            double &t,
+                                            double &rho_l, double &rho_v,
+                                            std::vector<double> &v_xliq,
+                                            std::vector<double> &v_xvap)
 {
   //...Get saturation properties given t,x; for i=1: x is liquid phase
   //.....                                   for i=2: x is vapor phase
   long kph=1; // liquid composition given
   double x_mass[ncmax], x_molar[ncmax],xliq[ncmax],xvap[ncmax];
-  x_molar[0] = 0.206791740960598;     // Mixture molar composition
-  x_molar[1] = 0.793208259039402;
-  x_molar[2] = 0;
+  for (int i = 0; i < ncmax; ++i) {
+    if (i < x.size())
+      x_mass[i] = x[i];
+    else
+      x_mass[i] = 0;
+  }
 
+  // convert to moles basis
   double wmol;
-  //       function WMOL (x)
-  // (double *,double &);
-  // mol/mol[], g/mol
-  WMOLdll(x_molar, wmol);
+  XMOLEdll(x_mass, x_molar, wmol);
 
   long ierr;
   char herr[errormessagelength+1];
@@ -628,8 +626,8 @@ void refproper::saturatedLiquidFromPressure(double p, double &t,
   SATPdll(p,x_molar,kph,t,rho_l,rho_v,xliq,xvap,ierr,herr,errormessagelength);
 
   // output unit conversion
-  rho_l = rho_l / wmol;
-  rho_v = rho_v / wmol;
+  rho_l = rho_l * wmol;
+  rho_v = rho_v * wmol;
 
   v_xliq.resize(2);
   mofs << "T,Dl,Dv,xl[0],xv[0]   "
@@ -661,7 +659,6 @@ void refproper::saturatedStateFromPressure2(double p, double q,
   // subroutine PQFLSH (p,q,z,kq,t,D,Dl,Dv,x,y,e,h,s,cv,cp,w,ierr,herr)
   //...Get saturation properties given t,x; for i=1: x is liquid phase
   //.....                                   for i=2: x is vapor phase
-  long kph=1; // liquid composition given
   double x_molar[ncmax],x_mass[ncmax],xliq[ncmax],xvap[ncmax];
   for (int i = 0; i < ncmax; ++i) {
     if (i < x.size())
@@ -683,9 +680,10 @@ void refproper::saturatedStateFromPressure2(double p, double q,
 
   // convert output units
   // [kg/m3] = [mol/L] * [g/mol] * (kg/g) * (L/m3)
-  D = D / wmol;
-  Dl = Dl / wmol;
-  Dv = Dv / wmol;
+  mofs << "Density conversion: " << D << "[mol/L] / (" << wmol << " [g/mol])" << std::endl;
+  D = D * wmol;
+  Dl = Dl * wmol;
+  Dv = Dv * wmol;
   // xliq and xvap are molar basis, fyi
   // [kJ/kg] = [J/mol] * [mol/g] * (kJ/J) * (g/kg)
   e = e / wmol;
@@ -713,7 +711,7 @@ void refproper::thermalProperties(double t, double rho_mass, std::vector<double>
 
   // convert units of inputs
   // [mol/L] = [kg/m3] * g/kg * m3/L * [mol/g]
-  double rho_molar = rho_mass * wmol;
+  double rho_molar = rho_mass / wmol;
 
   double cv, cp, w, hjt;
   //      subroutine THERM (t,rho,x,p,e,h,s,cv,cp,w,hjt)

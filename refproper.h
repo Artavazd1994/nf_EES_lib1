@@ -34,12 +34,13 @@ public:
   void demo();
   void setupMyFluid();
   void critp();
-  void saturatedLiquidFromPressure(double p, double &t,
+  void saturatedLiquidFromPressure(double p, std::vector<double> x,
+                                   double &t,
                                                double &rho_l, double &rho_v,
                                                std::vector<double> &v_xliq,
                                                std::vector<double> &v_xvap);
   // subroutine PQFLSH (p,q,z,kq,t,D,Dl,Dv,x,y,e,h,s,cv,cp,w,ierr,herr)
-  void saturatedStateFromPressure2(double p, double q, std::vector<double> z,
+  void saturatedStateFromPressure2(double p, double q, std::vector<double> x,
                                    double &t, double &D,
                                    double &h, double &s);
   void thermalProperties(double t, double rho, std::vector<double> x,
