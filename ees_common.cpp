@@ -99,10 +99,13 @@ double EesDLF::callDLF(char s[256], int &mode, struct EesParamRec *input_rec)
       myLib::getofs() << std::endl;
       myLib::getofs() << "calldlf: calling funcDLF ..." << std::endl;
       double res = funcDLF(str, input_vec);
+      myLib::getofs() << "calldlf: funcDLF returned:" << std::endl;
+      myLib::getofs() << "calldlf: \"" << str << "\"" << std::endl;
+      myLib::getofs() << "calldlf: " << res << std::endl;
       strcpy(s,str.c_str());
       return res;
     } catch (std::exception &e) {
-      mode = -10;
+      mode = 10;
       std::string ss = name + ": " + e.what();
       strcpy(s,ss.c_str());
       return 0;

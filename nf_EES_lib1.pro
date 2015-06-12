@@ -17,7 +17,9 @@ SOURCES += nf_ees_lib1.cpp \
     c_nfadd.cpp \
     c_nftliq.cpp \
     c_nfsatmix.cpp \
-    c_nfmixtherm.cpp
+    c_nfmixtherm.cpp \
+    c_libr_props.cpp \
+    c_nfpcrit.cpp
 
 HEADERS += nf_ees_lib1.h\
         nf_ees_lib1_global.h \
@@ -27,14 +29,19 @@ HEADERS += nf_ees_lib1.h\
     c_nfadd.h \
     c_nftliq.h \
     c_nfsatmix.h \
-    c_nfmixtherm.h
+    c_nfmixtherm.h \
+    c_libr_props.h \
+    c_nfpcrit.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
 
-LIBS += -L"C:/Program Files (x86)/REFPROP" -lrefprop
+INCLUDEPATH += "C:/Users/nfette/Documents/GitHub/CoolProp/include"
+
+LIBS += -L"C:/Program Files (x86)/REFPROP" -lrefprop \
+    -L"C:/Users/nfette/Documents/GitHub/CoolProp/build/Release" -lCoolProp
 
 OTHER_FILES += \
     exports.def

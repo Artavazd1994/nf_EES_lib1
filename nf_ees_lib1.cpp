@@ -69,6 +69,11 @@ EesDLP &myLib::getNftherm()
   return nfmixtherm;
 }
 
+EesDLF &myLib::getNfpcrit()
+{
+  return nfpcrit;
+}
+
 BOOL APIENTRY DllMain( HANDLE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -101,7 +106,7 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE DLFNames(char* Names)
   myLib::getofs() << "DLFNames with Names = "
        << pnames
        << std::endl;
-  strcpy(Names,"NFADD");
+  strcpy(Names,"NFADD,NFPCRIT");
 }
 
 // List of DLP format procedures
@@ -128,6 +133,12 @@ NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
   struct EesParamRec *input_rec)
 {
   return getLib().getNfadd().callDLF(s, mode, input_rec);
+}
+
+NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFPCRIT(char s[256], int &mode,
+  struct EesParamRec *input_rec)
+{
+  return getLib().getNfpcrit().callDLF(s, mode, input_rec);
 }
 
 NF_CLASS_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,

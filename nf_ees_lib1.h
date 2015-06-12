@@ -8,12 +8,14 @@
 #include "c_nftliq.h"
 #include "c_nfsatmix.h"
 #include "c_nfmixtherm.h"
+#include "c_nfpcrit.h"
 
 class myLib {
   C_NFADD nfadder;
   C_nftliq nftliquor;
   c_nfsatmix nfsatmix;
   c_nfmixtherm nfmixtherm;
+  c_nfpcrit nfpcrit;
 public:
   static void logtimestamp(std::ofstream &ofs);
   static std::ofstream & getofs();
@@ -23,6 +25,7 @@ public:
   EesDLP &getNftliq();
   EesDLP &getNfsatmix();
   EesDLP &getNftherm();
+  EesDLF &getNfpcrit();
 };
 
 myLib & getLib();
@@ -34,8 +37,12 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE DLFNames(char* Names);
 NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE DLPNames(char *Names);
 // List of FDL format procedures.
 NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE FDLNames(char* Names);
+
+// EES DLFs (Functions)
 // A very boring function.
 NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
+  struct EesParamRec *input_rec);
+NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFPCRIT(char s[256], int &mode,
   struct EesParamRec *input_rec);
 
 // A less boring function.

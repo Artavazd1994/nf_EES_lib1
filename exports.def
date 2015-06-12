@@ -3,3 +3,4 @@ EXPORTS
     DLPNames
     FDLNames
     NFADD
+    NFPCRIT
