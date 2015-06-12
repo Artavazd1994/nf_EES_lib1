@@ -5,11 +5,6 @@ c_nfsatmix::c_nfsatmix() :
   ::EesDLP("NFSATMIX", "call NFSATMIX(p, q: t, D, h, s)", "kPa,kg/kg", "K,kg/m3,kJ/kg,kJ/kg-K")
 {
   myLib::getofs() << name << ": object constructor" << std::endl;
-  try {
-    rp = refproper::factory(myLib::getofs());
-  } catch (...) {
-    myLib::getofs() << name << ": could not initialize refproper." << std::endl;
-  }
 }
 
 c_nfsatmix::~c_nfsatmix()
@@ -20,11 +15,11 @@ c_nfsatmix::~c_nfsatmix()
   }
 }
 
-void c_nfsatmix::funcDLP(std::string &s, std::vector<double> &inputs, std::vector<double> &outputs)
+void c_nfsatmix::funcDLP(std::string &, std::vector<double> &inputs, std::vector<double> &outputs)
 {
   if (rp == NULL) {
-    std::string str = name + "refproper library not initialized";
-    throw std::exception(str.c_str());
+    // throws std::exception
+    rp = refproper::factory(myLib::getofs());
   }
   rp -> setupMyFluid();
 

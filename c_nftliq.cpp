@@ -5,11 +5,6 @@ C_nftliq::C_nftliq() :
   ::EesDLP("NFTLIQ", "call NFTLIQ(P: t, rho_l, rho_v, xliq0, xvap0)", "kPa", "K,kg/m3,kg/m3,mol/mol,mol/mol")
 {
   myLib::getofs() << name << ": object constructor" << std::endl;
-  try {
-    rp = refproper::factory(myLib::getofs());
-  } catch (...) {
-    myLib::getofs() << name << ": could not initialize refproper." << std::endl;
-  }
 }
 
 C_nftliq::~C_nftliq()
@@ -20,11 +15,11 @@ C_nftliq::~C_nftliq()
   }
 }
 
-void C_nftliq::funcDLP(std::string &s, std::vector<double> &inputs, std::vector<double> &outputs)
+void C_nftliq::funcDLP(std::string &, std::vector<double> &inputs, std::vector<double> &outputs)
 {
   if (rp == NULL) {
-    std::string str = name + "refproper library not initialized";
-    throw std::exception(str.c_str());
+    // throws std::exception
+    rp = refproper::factory(myLib::getofs());
   }
   rp -> setupMyFluid();
 
