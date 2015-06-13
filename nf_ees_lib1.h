@@ -9,6 +9,7 @@
 #include "c_nfsatmix.h"
 #include "c_nfmixtherm.h"
 #include "c_nfpcrit.h"
+#include "c_nfp_libr.h"
 
 class myLib {
   C_NFADD nfadder;
@@ -16,6 +17,7 @@ class myLib {
   c_nfsatmix nfsatmix;
   c_nfmixtherm nfmixtherm;
   c_nfpcrit nfpcrit;
+  c_nfp_libr nfp_libr;
 public:
   static void logtimestamp(std::ofstream &ofs);
   static std::ofstream & getofs();
@@ -26,6 +28,7 @@ public:
   EesDLP &getNfsatmix();
   EesDLP &getNftherm();
   EesDLF &getNfpcrit();
+  EesDLF &getNfp_libr();
 };
 
 myLib & getLib();
@@ -43,6 +46,8 @@ NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE FDLNames(char* Names);
 NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFADD(char s[256], int &mode,
   struct EesParamRec *input_rec);
 NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFPCRIT(char s[256], int &mode,
+  struct EesParamRec *input_rec);
+NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFP_LIBR(char s[256], int &mode,
   struct EesParamRec *input_rec);
 
 // A less boring function.

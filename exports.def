@@ -4,3 +4,4 @@ EXPORTS
     FDLNames
     NFADD
     NFPCRIT
+    NFP_LIBR
