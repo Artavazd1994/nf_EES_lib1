@@ -1,3 +1,7 @@
+/** @file c_nftliq.h
+ * @brief A documented file.
+ */
+
 #ifndef EES_COMMON_H
 #define EES_COMMON_H
 
@@ -5,7 +9,11 @@
 #include <string>
 #include <vector>
 
-// Structure for handling ees calling syntax
+/**
+ * @brief The EesParamRec struct
+ *
+ * Structure for handling EES external code calling syntax
+ */
 struct EesParamRec {
   double value;
   struct EesParamRec *next;
@@ -15,6 +23,11 @@ typedef double (__stdcall *fp_ees_dlf) (char s[256], int &mode, EesParamRec *inp
 typedef void (__stdcall *fp_ees_dlp) (char s[256], int &mode, EesParamRec *input_rec, EesParamRec *output_rec);
 typedef void (__stdcall *fp_ees_fdl) (char s[256], int& clen, int& mode, int& NInputs, double inputs[], int& NOutputs, double outputs[]);
 
+/**
+ * @brief The EesCommonFunction class
+ *
+ * Common features of functions wrapped for EES include name, call signature, and units.
+ */
 class EesCommonFunction {
 protected:
   std::string name;
@@ -32,6 +45,11 @@ public:
   std::string getOutputUnits() const;
 };
 
+/**
+ * @brief The EesDLF class
+ *
+ * Wrapper specifically for EES external funtions (having a single output).
+ */
 class EesDLF: public EesCommonFunction {
 public:
   EesDLF(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits);
@@ -39,6 +57,11 @@ public:
   double callDLF(char s[256], int &mode, struct EesParamRec *input_rec);
 };
 
+/**
+ * @brief The EesDLP class
+ *
+ * Wrapper specifically for EES external funtions (having multiple outputs).
+ */
 class EesDLP: public EesCommonFunction {
 public:
   EesDLP(std::string Name, std::string CallSignature, std::string InputUnits, std::string OutputUnits);
@@ -46,6 +69,11 @@ public:
   void callDLP(char s[256], int &mode, EesParamRec *input_rec, EesParamRec *output_rec);
 };
 
+/**
+ * @brief The EesFDL class
+ *
+ * Wrapper specifically for EES external functions (Fortran style).
+ */
 class EesFDL: public EesCommonFunction {
 public:
   virtual void funcFDL(std::string &s, std::vector<double> &inputs, std::vector<double> &outputs) = 0;

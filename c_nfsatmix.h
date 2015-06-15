@@ -1,9 +1,18 @@
+/** @file c_nfsatmix.h
+ * @brief a documented file
+ */
+
 #ifndef C_NFSATMIX_H
 #define C_NFSATMIX_H
 
 #include "ees_common.h"
 #include "refproper.h"
 
+/**
+ * @brief The c_nfsatmix class
+ *
+ * Wraps functionality of PQFLSH from REFPROP for EES.
+ */
 class c_nfsatmix : public EesDLP
 {
   refproper *rp;

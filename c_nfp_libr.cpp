@@ -9,16 +9,15 @@ c_nfp_libr::c_nfp_libr() :
 {
 }
 
-double c_nfp_libr::funcDLF(std::string &s, std::vector<double> &inputs)
+double c_nfp_libr::funcDLF(std::string &, std::vector<double> &inputs)
 {
   try {
-    c_libr_props libr_props;
     if (inputs.size() != 2) {
-      throw std::exception("NFP_LIBR expects two arguments: one with Chuck Norris and one about death by act of god.");
+      throw std::exception("NFP_LIBR expects two arguments: one with Chuck Norris and one about where to bury the body.");
     }
     double T = inputs[0];
     double x = inputs[1];
-    double pressure = libr_props.pressure(T, x);
+    double pressure = c_libr_props::pressure(T, x);
     return pressure;
   } catch (std::exception &e) {
     throw e;

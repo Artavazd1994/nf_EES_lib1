@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
+QT       -= gui core
 
 TARGET = nf_EES_lib1
 TEMPLATE = lib
@@ -20,7 +20,9 @@ SOURCES += nf_ees_lib1.cpp \
     c_nfmixtherm.cpp \
     c_libr_props.cpp \
     c_nfpcrit.cpp \
-    c_nfp_libr.cpp
+    c_nfp_libr.cpp \
+    c_nfpyadd.cpp \
+    c_nft_libr.cpp
 
 HEADERS += nf_ees_lib1.h\
         nf_ees_lib1_global.h \
@@ -33,21 +35,26 @@ HEADERS += nf_ees_lib1.h\
     c_nfmixtherm.h \
     c_libr_props.h \
     c_nfpcrit.h \
-    c_nfp_libr.h
+    c_nfp_libr.h \
+    c_nfpyadd.h \
+    c_nft_libr.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
 
-INCLUDEPATH += "C:/Users/nfette/Documents/GitHub/CoolProp/include"
+INCLUDEPATH += $$(HOMEPATH)/Documents/GitHub/CoolProp/include \
+    C:/Python27/include \
+    C:/installs/boost/boost_1_58_0
 
 LIBS += -L"C:/Program Files (x86)/REFPROP" -lrefprop \
-    -L"C:/Users/nfette/Documents/GitHub/CoolProp/build/Release" -lCoolProp
+    -L$$(HOMEPATH)"/Documents/GitHub/CoolProp/build/Release" -lCoolProp \
+    -L"C:/Python27/libs" -lpython27
 
 OTHER_FILES += \
     exports.def
 
 #QMAKE_CFLAGS += /Gr
 #QMAKE_CXXFLAGS += /Gr
-QMAKE_LFLAGS += /DEF:C:\Users\nfette\Documents\scratch\qt\nf_EES_lib1\exports.def
+QMAKE_LFLAGS += /DEF:$$(HOMEPATH)\Documents\scratch\qt\nf_EES_lib1\exports.def

@@ -3,5 +3,7 @@ EXPORTS
     DLPNames
     FDLNames
     NFADD
+    NFPYADD
     NFPCRIT
     NFP_LIBR
+    NFT_LIBR

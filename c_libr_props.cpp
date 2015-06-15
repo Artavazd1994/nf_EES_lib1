@@ -4,6 +4,7 @@
 #include <cmath>
 #include "nf_ees_lib1.h"
 #include <exception>
+#include <boost/math/tools/roots.hpp>
 
 namespace nf {
 int isnan(double x) { return x != x; }
@@ -12,10 +13,6 @@ int isinf(double x) { return !isnan(x) && isnan(x - x); }
 
 const double c_libr_props::MW_LiBr = 86.85;
 const double c_libr_props::MW_H2O = 18.015;
-
-c_libr_props::c_libr_props()
-{
-}
 
 double c_libr_props::C2K(double tc)
 {
@@ -99,4 +96,39 @@ double c_libr_props::pressure(double T, double x)
   double pressureBar = pressurePa * 1e-5;
 
   return pressureBar;
+}
+
+/**
+ * @brief c_libr_props::objectiveT
+ * @param T
+ * @param P
+ * @param x
+ * @return Error in provided pressure.
+ */
+double c_libr_props::objectiveT(double T, double P, double x)
+{
+  return pow(P - pressure(T,x), 2);
+}
+
+double c_libr_props::temperature(double P, double x)
+{
+  LiBr_TFunctor f(P, x);
+  double T = boost::math::tools::newton_raphson_iterate
+      <LiBr_TFunctor, double>(f, 646., 274, 647, 20);
+  return T;
+}
+
+LiBr_TFunctor::LiBr_TFunctor(const double &P, const double &X, double deltaT)
+  : p(P), x(X), deltaT(deltaT)
+{
+}
+
+boost::math::tuple<double, double> LiBr_TFunctor::operator()(const double &Tguess)
+{
+  double P0 = c_libr_props::pressure(Tguess, x);
+  double P1 = c_libr_props::pressure(Tguess + deltaT, x);
+  double dPdT = (P1 - P0) / deltaT;
+  double f = (P0 - p) * (P0 - p); // the objective function
+  double fprime = 2.0 * (P0 - p) * dPdT;
+  return boost::math::make_tuple(f, fprime);
 }
