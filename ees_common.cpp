@@ -1,5 +1,5 @@
 #include "ees_common.h"
-#include <exception>
+#include <stdexcept>
 #include "nf_ees_lib1.h"
 
 // This is guaranteed not to fail.
@@ -25,7 +25,7 @@ void EesCommonFunction::Vector2ParamRec(std::vector<double> const & output_vec, 
     givenLength++;
   }
   if (givenLength < output_vec.size()) {
-    throw std::exception("Output record too short. Good luck!");
+    throw std::runtime_error("Output record too short. Good luck!");
   }
   output = output_rec;
   for (std::vector<double>::const_iterator it = output_vec.begin(); it != output_vec.end(); ++it)
@@ -35,7 +35,7 @@ void EesCommonFunction::Vector2ParamRec(std::vector<double> const & output_vec, 
   }
   /*
   if (output != NULL) {
-    throw std::exception("Output record too long. Good luck!");
+    throw std::runtime_error("Output record too long. Good luck!");
   }
   */
 }

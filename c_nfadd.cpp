@@ -1,5 +1,6 @@
 #include "c_nfadd.h"
 #include "nf_ees_lib1.h"
+#include <stdexcept>
 
 C_NFADD::C_NFADD() :
   ::EesDLF("NFADD", "c = NFADD(a,b)", "m,m", "m")
@@ -14,7 +15,7 @@ C_NFADD::~C_NFADD() {
 double C_NFADD::funcDLF(std::string &s, std::vector<double> &inputs)
 {
   if (inputs[0] == 0) {
-    throw std::exception("I am your father.");
+    throw std::runtime_error("I am your father.");
   }
   return inputs[0] + inputs[1];
 }

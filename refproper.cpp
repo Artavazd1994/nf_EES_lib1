@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <iomanip>
 #include "ees_common.h"
+#include <stdexcept>
 
 #undef UNICODE
 
@@ -57,7 +58,7 @@ mLibPath(LibPath)
     mofs << "refproper: Loaded the library!" << std::endl;
   } else {
     mofs << "refproper: Did not load the library! Watch out now." << std::endl;
-    throw std::exception("refproper: Failed to load the library! Giants, flames, death and despair.");
+    throw std::runtime_error("refproper: Failed to load the library! Giants, flames, death and despair.");
   }
 
   // Then get pointers into the dll to the actual functions.
@@ -524,7 +525,7 @@ void refproper::setupMyFluid()
   //long ,char*,char*,char*,long ,char*,long ,long ,long ,long
   if (ierr != 0) {
     mofs << herr << std::endl;
-    throw std::exception("refproper: error: failed to initialize mixture. See log file.");
+    throw std::runtime_error("refproper: error: failed to initialize mixture. See log file.");
   }
 }
 

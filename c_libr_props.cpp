@@ -28,7 +28,7 @@ double c_libr_props::underPressure(std::string fluid)
 {
   double result = CoolProp::Props1SI(fluid,"Pcrit");
   if (nf::isinf(result)) {
-    throw std::exception("CoolProp doesn't know that fluid.");
+    throw std::runtime_error("CoolProp doesn't know that fluid.");
   }
   return result;
 }
@@ -68,7 +68,7 @@ double c_libr_props::pressure(double T, double x)
   int n[] = {0,5,6,3,0,2,6,0};
   int t[] = {0,0,0,0,1,1,1,1};
   double T_c = 647.096; // [K]
-  double h_c = 37548.5; // [J/gmol] "Enthalpy at the critical point for pure water"
+  //double h_c = 37548.5; // [J/gmol] "Enthalpy at the critical point for pure water"
   // TK = convertTemp(T$,K,T)	"convert to K"
   double TK = T;
   // if (UnitSystem('mass')=1) then x=molefraction_LiBrH2O(x)
@@ -84,14 +84,14 @@ double c_libr_props::pressure(double T, double x)
   double Q = 0.0;
   // print("Ts, Q = {}, {}".format(Ts, Q))
   double pressurePa = CoolProp::PropsSI("P","T",Ts,"Q",Q,"Water"); // Pa
-  getLib().getofs() << "Ts, Q = " << Ts << ", " << Q << std::endl;
-  getLib().getofs() << "still here" << std::endl;
+  //myLib::getofs() << "Ts, Q = " << Ts << ", " << Q << std::endl;
+  //myLib::getofs() << "still here" << std::endl;
   if (nf::isinf(pressurePa)) {
-    getLib().getofs() << "preparing to throw a fit" << std::endl;
-    throw std::exception("CoolProp is unhappy with you for SO MANY REASONS. But I can't name any.");
+    myLib::getofs() << "preparing to throw a fit" << std::endl;
+    throw std::runtime_error("CoolProp is unhappy with you for SO MANY REASONS. But I can't name any.");
   }
-  getLib().getofs() << "but not here" << std::endl;
-  //myLib().getofs() << "pressurePa = " << pressurePa << std::endl;
+  //myLib::getofs() << "but not here" << std::endl;
+  //myLib::getofs() << "pressurePa = " << pressurePa << std::endl;
   // print("pressurePa = {}".format(pressurePa)) // ()
   double pressureBar = pressurePa * 1e-5;
 
@@ -110,11 +110,19 @@ double c_libr_props::objectiveT(double T, double P, double x)
   return pow(P - pressure(T,x), 2);
 }
 
-double c_libr_props::temperature(double P, double x)
+double c_libr_props::temperature(double P, double x, double T)
 {
+  static double Tguess = 646.;
   LiBr_TFunctor f(P, x);
-  double T = boost::math::tools::newton_raphson_iterate
-      <LiBr_TFunctor, double>(f, 646., 274, 647, 20);
+  boost::uintmax_t maxiters = 100;
+  int binarydigits = 16;
+  if (T > 0) {
+    Tguess = T;
+  }
+  T = boost::math::tools::newton_raphson_iterate
+      <LiBr_TFunctor, double>(f, Tguess, 273.16, 647.096,
+                              binarydigits, maxiters);
+  Tguess = T;
   return T;
 }
 

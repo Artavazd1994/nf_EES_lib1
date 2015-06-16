@@ -1,6 +1,6 @@
 #include "c_nfp_libr.h"
 
-#include <exception>
+#include <stdexcept>
 #include "c_libr_props.h"
 #include "nf_ees_lib1.h"
 
@@ -13,7 +13,7 @@ double c_nfp_libr::funcDLF(std::string &, std::vector<double> &inputs)
 {
   try {
     if (inputs.size() != 2) {
-      throw std::exception("NFP_LIBR expects two arguments: one with Chuck Norris and one about where to bury the body.");
+      throw std::runtime_error("NFP_LIBR expects two arguments: one with Chuck Norris and one about where to bury the body.");
     }
     double T = inputs[0];
     double x = inputs[1];
@@ -22,6 +22,6 @@ double c_nfp_libr::funcDLF(std::string &, std::vector<double> &inputs)
   } catch (std::exception &e) {
     throw e;
   } catch (...) {
-    throw std::exception("An unknown kind of thing ... perhaps a Balrog?");
+    throw std::runtime_error("An unknown kind of thing ... perhaps a Balrog?");
   }
 }

@@ -44,17 +44,33 @@ unix {
     INSTALLS += target
 }
 
-INCLUDEPATH += $$(HOMEPATH)/Documents/GitHub/CoolProp/include \
-    C:/Python27/include \
-    C:/installs/boost/boost_1_58_0
-
-LIBS += -L"C:/Program Files (x86)/REFPROP" -lrefprop \
-    -L$$(HOMEPATH)"/Documents/GitHub/CoolProp/build/Release" -lCoolProp \
-    -L"C:/Python27/libs" -lpython27
-
 OTHER_FILES += \
     exports.def
 
-#QMAKE_CFLAGS += /Gr
-#QMAKE_CXXFLAGS += /Gr
+INCLUDEPATH += $$(HOMEPATH)/Documents/GitHub/CoolProp/include \
+    C:/Python27/include \
+    C:/installs/boost/boost_1_58_0 \
+    $$(HOMEPATH)/Documents/GitHub/openACHP/src/cython
+
+# Visual studio
+
+LIBS += -L"C:/Program Files (x86)/REFPROP" -lrefprop \
+    -L$$(HOMEPATH)"/Documents/GitHub/CoolProp/build/Release" -lCoolProp \
+    -L"C:/Python27/libs" -lpython27 \
+    -L$$(HOMEPATH)"/Documents/GitHub/openACHP/src/cython/build/temp.win32-2.7/Release" -lhelloworld
+
 QMAKE_LFLAGS += /DEF:$$(HOMEPATH)\Documents\scratch\qt\nf_EES_lib1\exports.def
+
+# MinGW
+#LIBS += $$(HOMEPATH)\Documents\scratch\qt\nf_EES_lib1\exports.def \
+#    -LC:\Qt\Qt5.4.2\Tools\mingw491_32\i686-w64-mingw32\lib -lmingw32 \
+#    \ #-L"C:/Program Files (x86)/REFPROP" -lrefprop \
+#    -L$$(HOMEPATH)"/Documents/GitHub/CoolProp/buildmingw" -lCoolProp \
+#    -LC:/Python27/libs -lpython27 \
+#    \ #-LC:/Windows/SysWOW64 -lpython27 \
+#    -L$$(HOMEPATH)"/Documents/GitHub/openACHP/src/cython/build/lib.win32-2.7" -lhelloworld
+
+# If you are curious:
+#QMAKE_LFLAGS += -Xlinker --output-def=show_me_the_symbols.DEF
+# Omit the linker warnings about resolving symbols in the export file.
+#QMAKE_LFLAGS += -Xlinker --enable-stdcall-fixup

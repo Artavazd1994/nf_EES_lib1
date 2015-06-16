@@ -29,7 +29,7 @@ public:
   static double moleFraction(double w);
   static double pressure(double T, double x);
   static double objectiveT(double T, double P, double x);
-  static double temperature(double P, double x);
+  static double temperature(double P, double x, double Tguess = 0);
   static double objectiveX(double x, double T, double P);
   static double massFraction(double T, double P);
   static double massSpecificEnthalpy(double T, double x);

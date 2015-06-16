@@ -61,13 +61,13 @@ NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFT_LIBR(char s[256], int &mode,
   struct EesParamRec *input_rec);
 
 // A less boring function.
-NF_CLASS_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
+NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
   struct EesParamRec *input_rec, struct EesParamRec *output_rec);
 
-NF_CLASS_EXPORT void NF_CALLCODE NFSATMIX(char s[256], int &mode,
+NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFSATMIX(char s[256], int &mode,
   struct EesParamRec *input_rec, struct EesParamRec *output_rec);
 
-NF_CLASS_EXPORT void NF_CALLCODE NFMIXTHERM(char s[256], int &mode,
+NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFMIXTHERM(char s[256], int &mode,
   struct EesParamRec *input_rec, struct EesParamRec *output_rec);
 
 #endif // NF_EES_LIB1_H

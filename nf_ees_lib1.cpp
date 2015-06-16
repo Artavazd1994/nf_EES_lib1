@@ -173,26 +173,26 @@ NF_EES_LIB1SHARED_EXPORT double NF_CALLCODE NFT_LIBR(char s[256], int &mode,
   return getLib().getNft_libr().callDLF(s, mode, input_rec);
 }
 
-NF_CLASS_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
+NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFTLIQ(char s[256], int &mode,
   struct EesParamRec *input_rec, struct EesParamRec *output_rec)
 {
   getLib().getNftliq().callDLP(s, mode, input_rec, output_rec);
   return;
 }
-#pragma comment(linker, "/EXPORT:NFTLIQ=?NFTLIQ@@YGXQADAAHPAUEesParamRec@@2@Z")
+//#pragma comment(linker, "/EXPORT:NFTLIQ=?NFTLIQ@@YGXQADAAHPAUEesParamRec@@2@Z")
 
-NF_CLASS_EXPORT void NF_CALLCODE NFSATMIX(char s[256], int &mode,
+NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFSATMIX(char s[256], int &mode,
   struct EesParamRec *input_rec, struct EesParamRec *output_rec)
 {
   getLib().getNfsatmix().callDLP(s, mode, input_rec, output_rec);
   return;
 }
-#pragma comment(linker, "/EXPORT:NFSATMIX=?NFSATMIX@@YGXQADAAHPAUEesParamRec@@2@Z")
+//#pragma comment(linker, "/EXPORT:NFSATMIX=?NFSATMIX@@YGXQADAAHPAUEesParamRec@@2@Z")
 
-NF_CLASS_EXPORT void NF_CALLCODE NFMIXTHERM(char s[256], int &mode,
+NF_EES_LIB1SHARED_EXPORT void NF_CALLCODE NFMIXTHERM(char s[256], int &mode,
   struct EesParamRec *input_rec, struct EesParamRec *output_rec)
 {
   getLib().getNftherm().callDLP(s, mode, input_rec, output_rec);
   return;
 }
-#pragma comment(linker, "/EXPORT:NFMIXTHERM=?NFMIXTHERM@@YGXQADAAHPAUEesParamRec@@2@Z")
+//#pragma comment(linker, "/EXPORT:NFMIXTHERM=?NFMIXTHERM@@YGXQADAAHPAUEesParamRec@@2@Z")
