@@ -22,7 +22,11 @@ SOURCES += nf_ees_lib1.cpp \
     c_nfpcrit.cpp \
     c_nfp_libr.cpp \
     c_nfpyadd.cpp \
-    c_nft_libr.cpp
+    c_nft_libr.cpp \
+    c_nfh_libr.cpp \
+    c_nfv_libr.cpp \
+    c_nfx_libr.cpp \
+    c_nfq_libr.cpp
 
 HEADERS += nf_ees_lib1.h\
         nf_ees_lib1_global.h \
@@ -37,7 +41,11 @@ HEADERS += nf_ees_lib1.h\
     c_nfpcrit.h \
     c_nfp_libr.h \
     c_nfpyadd.h \
-    c_nft_libr.h
+    c_nft_libr.h \
+    c_nfh_libr.h \
+    c_nfv_libr.h \
+    c_nfx_libr.h \
+    c_nfq_libr.h
 
 unix {
     target.path = /usr/lib
@@ -47,17 +55,35 @@ unix {
 OTHER_FILES += \
     exports.def
 
-INCLUDEPATH += $$(HOMEPATH)/Documents/GitHub/CoolProp/include \
-    C:/Python27/include \
-    C:/installs/boost/boost_1_58_0 \
-    $$(HOMEPATH)/Documents/GitHub/openACHP/src/cython
+CoolPropIncludes = C:/Users/nfette/Documents/GitHub/CoolProp/externals/Eigen \
+    C:/Users/nfette/Documents/GitHub/CoolProp/externals/REFPROP-headers \
+    C:/Users/nfette/Documents/GitHub/CoolProp/externals/msgpack-c/include \
+    C:/Users/nfette/Documents/GitHub/CoolProp/externals/IF97 \
+    C:/Users/nfette/Documents/GitHub/CoolProp/include \
+    C:/Users/nfette/Documents/GitHub/CoolProp/include/rapidjson/rapidjson \
+    C:/Users/nfette/Documents/GitHub/CoolProp/include/rapidjson/rapidjson/internal \
+    C:/Users/nfette/Documents/GitHub/CoolProp/include/rapidjson \
+    C:/Users/nfette/Documents/GitHub/CoolProp/src/Backends/Helmholtz \
+    C:/Users/nfette/Documents/GitHub/CoolProp/src/Backends/Helmholtz/Fluids \
+    C:/Users/nfette/Documents/GitHub/CoolProp/src/Backends/IF97 \
+    C:/Users/nfette/Documents/GitHub/CoolProp/src/Backends/Incompressible \
+    C:/Users/nfette/Documents/GitHub/CoolProp/src/Backends/REFPROP \
+    C:/Users/nfette/Documents/GitHub/CoolProp/src/Backends/Tabular \
+    C:/Users/nfette/Documents/GitHub/CoolProp/src/l10n
+
+INCLUDEPATH += $${CoolPropIncludes} \
+    C:/installs/boost/boost_1_58_0 #\
+    #C:/Python27/include \
+    #$$(HOMEPATH)/Documents/GitHub/openACHP/src/cython
+
+DEPENDPATH += $${CoolPropIncludes}
 
 # Visual studio
 
-LIBS += -L"C:/Program Files (x86)/REFPROP" -lrefprop \
-    -L$$(HOMEPATH)"/Documents/GitHub/CoolProp/build/Release" -lCoolProp \
-    -L"C:/Python27/libs" -lpython27 \
-    -L$$(HOMEPATH)"/Documents/GitHub/openACHP/src/cython/build/temp.win32-2.7/Release" -lhelloworld
+LIBS += -L$$(HOMEPATH)"/Documents/GitHub/CoolProp/build/Release" -lCoolProp #\
+    #-L"C:/Program Files (x86)/REFPROP" -lrefprop \
+    #-L"C:/Python27/libs" -lpython27 \
+    #-L$$(HOMEPATH)"/Documents/GitHub/openACHP/src/cython/build/temp.win32-2.7/Release" -lhelloworld
 
 QMAKE_LFLAGS += /DEF:$$(HOMEPATH)\Documents\scratch\qt\nf_EES_lib1\exports.def
 
@@ -74,3 +100,4 @@ QMAKE_LFLAGS += /DEF:$$(HOMEPATH)\Documents\scratch\qt\nf_EES_lib1\exports.def
 #QMAKE_LFLAGS += -Xlinker --output-def=show_me_the_symbols.DEF
 # Omit the linker warnings about resolving symbols in the export file.
 #QMAKE_LFLAGS += -Xlinker --enable-stdcall-fixup
+

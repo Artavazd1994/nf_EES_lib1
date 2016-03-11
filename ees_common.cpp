@@ -86,22 +86,22 @@ double EesDLF::callDLF(char s[256], int &mode, struct EesParamRec *input_rec)
   default:
     try {
       myLib::logtimestamp(myLib::getofs());
-      myLib::getofs() << "calldlf: converting string input ..." << std::endl;
+      //myLib::getofs() << "calldlf: converting string input ..." << std::endl;
       std::string str(s);
-      myLib::getofs() << "calldlf: converting input records ..." << std::endl;
+      //myLib::getofs() << "calldlf: converting input records ..." << std::endl;
       std::vector<double> input_vec = ParamRec2Vector(input_rec);
-      myLib::getofs() << "calldlf: str = \"" << str.substr(0,10) << "\" ... " << std::endl;
-      myLib::getofs() << "calldlf: input_vec = ";
+      //myLib::getofs() << "calldlf: str = \"" << str.substr(0,10) << "\" ... " << std::endl;
+      myLib::getofs() << "calldlf: " << name << "(";
       for (std::vector<double>::const_iterator it = input_vec.begin(); it != input_vec.end(); ++it)
       {
         myLib::getofs() << *it << ",";
       }
-      myLib::getofs() << std::endl;
-      myLib::getofs() << "calldlf: calling funcDLF ..." << std::endl;
+      myLib::getofs() << ")" << std::endl;
+      //myLib::getofs() << "calldlf: calling funcDLF ..." << std::endl;
       double res = funcDLF(str, input_vec);
-      myLib::getofs() << "calldlf: funcDLF returned:" << std::endl;
-      myLib::getofs() << "calldlf: \"" << str << "\"" << std::endl;
-      myLib::getofs() << "calldlf: " << res << std::endl;
+      myLib::getofs() << "calldlf: returning " << res << std::endl;
+      //myLib::getofs() << "calldlf: \"" << str << "\"" << std::endl;
+      //myLib::getofs() << "calldlf: " << res << std::endl;
       strcpy(s,str.c_str());
       return res;
     } catch (std::exception &e) {
@@ -134,20 +134,19 @@ void EesDLP::callDLP(char s[256], int &mode, EesParamRec *input_rec, EesParamRec
     return;
   default:
     try {
-      myLib::logtimestamp(myLib::getofs());
-      myLib::getofs() << "calldlp: converting string input ..." << std::endl;
+      //myLib::logtimestamp(myLib::getofs());
+      //myLib::getofs() << "calldlp: converting string input ..." << std::endl;
       std::string str(s);
-      myLib::getofs() << "calldlp: converting input records ..." << std::endl;
+      //myLib::getofs() << "calldlp: converting input records ..." << std::endl;
       std::vector<double> input_vec = ParamRec2Vector(input_rec);
-      myLib::getofs() << "calldlp: str = \"" << str.substr(0,10) << "\" ... " << std::endl;
-      myLib::getofs() << "calldlp: input_vec = ";
+      // myLib::getofs() << "calldlp: str = \"" << str.substr(0,10) << "\" ... " << std::endl;
+      myLib::getofs() << "call " << name << "(";
       for (std::vector<double>::const_iterator it = input_vec.begin(); it != input_vec.end(); ++it)
       {
         myLib::getofs() << *it << ",";
       }
-      myLib::getofs() << std::endl;
-
-      myLib::getofs() << "calldlp: calling funcDLP ..." << std::endl;
+      myLib::getofs() << ")" << std::endl;
+      //myLib::getofs() << "calldlp: calling funcDLP ..." << std::endl;
       std::vector<double> output_vec;
       funcDLP(str, input_vec, output_vec);
 
